@@ -1,0 +1,50 @@
+# Define os modelos de dados para validação de entrada e serialização de saída
+from pydantic import BaseModel
+from datetime import datetime
+from typing import Optional, List
+
+class LocationBase(BaseModel):
+    name: str
+    lat: float
+    lng: float
+
+class LocationCreate(LocationBase):
+    pass
+
+class Location(LocationBase):
+    id: int
+    class Config:
+        from_attributes = True
+
+class ControllerBase(BaseModel):
+    location_id: int
+    hw_desc: str
+    enabled: bool
+    version: float
+
+class ControllerCreate(ControllerBase):
+    pass
+
+class Controller(ControllerBase):
+    id: int
+    key: str
+    class Config:
+        from_attributes = True
+
+class SensorMeteoSMEBase(BaseModel):
+    temperature: float
+    humidity: float
+    dir_wind: int
+    vel_wind: float
+    pressure: float
+    rain_measure: float
+
+class SensorMeteoSMECreate(SensorMeteoSMEBase):
+    pass
+
+class SensorMeteoSME(SensorMeteoSMEBase):
+    id: int
+    controller_id: int
+    time: datetime
+    class Config:
+        from_attributes = True

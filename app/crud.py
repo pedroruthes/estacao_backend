@@ -1,0 +1,67 @@
+# Contém as funções de interação com o banco de dados
+from sqlalchemy.orm import Session
+from app import models, schemas
+import secrets # Para gerar tokens de API
+from datetime import datetime
+
+# Funções CRUD para Locations
+def get_location(db: Session, location_id: int):
+    return db.query(models.Location).filter(models.Location.id == location_id).first()
+
+def get_locations(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Location).offset(skip).limit(limit).all()
+
+def create_location(db: Session, location: schemas.LocationCreate):
+    db_location = models.Location(**location.model_dump())
+    db.add(db_location)
+    db.commit()
+    db.refresh(db_location)
+    return db_location
+
+# Funções CRUD para Controllers
+def get_controller(db: Session, controller_id: int):
+    return db.query(models.Controller).filter(models.Controller.id == controller_id).first()
+
+def get_controller_by_key(db: Session, key: str):
+    return db.query(models.Controller).filter(models.Controller.key == key).first()
+
+def get_controllers(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Controller).offset(skip).limit(limit).all()
+
+def create_controller(db: Session, controller: schemas.ControllerCreate):
+    # Gera uma chave de API para o controlador
+    api_key = secrets.token_urlsafe(32)
+    db_controller = models.Controller(**controller.model_dump(), key=api_key)
+    db.add(db_controller)
+    db.commit()
+    db.refresh(db_controller)
+    return db_controller
+
+# Funções CRUD para SensorMeteoSME
+def create_sensor_meteo_sme_data(db: Session, data: schemas.SensorMeteoSMECreate, controller_id: int):
+    db_data = models.SensorMeteoSME(**data.model_dump(), controller_id=controller_id, time=datetime.utcnow())
+    db.add(db_data)
+    db.commit()
+    db.refresh(db_data)
+    return db_data
+
+def get_sensor_meteo_sme_data_by_controller(
+    db: Session, controller_id: int, skip: int = 0, limit: int = 100
+):
+    return db.query(models.SensorMeteoSME).filter(
+        models.SensorMeteoSME.controller_id == controller_id
+    ).order_by(models.SensorMeteoSME.time.desc()).offset(skip).limit(limit).all()
+
+def get_sensor_meteo_sme_data_by_controller_and_time_range(
+    db: Session,
+    controller_id: int,
+    start_time: datetime,
+    end_time: datetime,
+    skip: int = 0,
+    limit: int = 100
+):
+    return db.query(models.SensorMeteoSME).filter(
+        models.SensorMeteoSME.controller_id == controller_id,
+        models.SensorMeteoSME.time >= start_time,
+        models.SensorMeteoSME.time <= end_time
+    ).order_by(models.SensorMeteoSME.time.desc()).offset(skip).limit(limit).all()
