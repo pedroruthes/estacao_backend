@@ -1,0 +1,30 @@
+# Ignorar diretórios de ambientes virtuais
+venv/
+.venv/
+
+# Ignorar arquivos de cache e compilação do Python
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Ignorar arquivos específicos do IDE (se estiver usando PyCharm, VS Code, etc.)
+.idea/
+.vscode/
+
+# Ignorar variáveis de ambiente (contêm credenciais sensíveis)
+.env
+.flaskenv
+
+# Ignorar arquivos de log (se gerados)
+*.log
+
+# Ignorar arquivos de banco de dados SQLite (se usado, mas não para PostgreSQL)
+*.db
+*.sqlite
+*.sqlite3
+
+# Ignorar diretórios de dados temporários
+data/
+tmp/
