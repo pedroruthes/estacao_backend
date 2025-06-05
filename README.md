@@ -55,65 +55,9 @@ Antes de iniciar, certifique-se de ter instalado:
     Você também pode ver a documentação ReDoc em:
     `http://127.0.0.1:8000/redoc`
 
-## Endpoints da API
-
-A API oferece os seguintes endpoints para o MVP:
-
-* **`POST /locations/`**: Cria um novo local (ex: cidade, fazenda).
-    * **Payload Exemplo**:
-        ```json
-        {
-          "name": "Brusque",
-          "lat": -27.2117,
-          "lng": -48.9179
-        }
-        ```
-* **`GET /locations/`**: Lista todos os locais cadastrados.
-* **`GET /locations/{location_id}`**: Obtém detalhes de um local específico.
-
-* **`POST /controllers/`**: Cadastra um novo controlador (estação física) e **gera automaticamente uma `key` de autenticação para ele**.
-    * **Payload Exemplo**:
-        ```json
-        {
-          "location_id": 1,        // ID do local onde o controlador está
-          "hw_desc": "ESP8266 v1.0",
-          "enabled": true,
-          "version": 1.0
-        }
-        ```
-    * **Resposta**: Incluirá a `key` gerada, que deve ser usada pelo ESP8266. Ex:
-        ```json
-        {
-          "id": 1,
-          "location_id": 1,
-          "hw_desc": "ESP8266 v1.0",
-          "enabled": true,
-          "version": 1.0,
-          "key": "sua_chave_unica_gerada_aqui"
-        }
-        ```
-* **`GET /controllers/`**: Lista todos os controladores cadastrados.
-* **`GET /controllers/{controller_id}`**: Obtém detalhes de um controlador específico.
-
-* **`POST /sensors/meteo`**: **Endpoint para o ESP8266 enviar dados meteorológicos.**
-    * **Autenticação**: Requer um cabeçalho `X-Controller-Key` com a chave gerada para o controlador.
-    * **Payload Exemplo**:
-        ```json
-        {
-          "temperature": 25.3,
-          "humidity": 78.1,
-          "dir_wind": 180,
-          "vel_wind": 12.5,
-          "pressure": 1012.7,
-          "rain_measure": 0.5
-        }
-        ```
-* **`GET /sensors/meteo/{controller_id}`**: Obtém os dados meteorológicos para um controlador específico.
-    * Parâmetros de query opcionais: `start_time` e `end_time` (formato ISO 8601, ex: `2024-01-01T00:00:00`).
-
 ## Implementação no Código C++ do ESP8266 (Arduino IDE)
 
-O código C++ no seu ESP8266 deve ser configurado para enviar requisições HTTP POST para o endpoint `/sensors/meteo` do seu backend.
+O código C++ no seu ESP8266 deve ser configurado para enviar requisições HTTP POST para o endpoint `/data` do seu backend.
 
 ### Bibliotecas Necessárias (Arduino IDE)
 
