@@ -2,7 +2,7 @@
 from sqlalchemy.orm import Session
 from app import models, schemas
 import secrets # Para gerar tokens de API
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Funções CRUD para Locations
 def get_location(db: Session, location_id: int):
@@ -38,7 +38,7 @@ def create_controller(db: Session, controller: schemas.ControllerCreate):
 
 # Funções CRUD para SensorMeteoSME
 def create_sensor_meteo_sme_data(db: Session, data: schemas.SensorMeteoSMECreate, controller_id: int):
-    db_data = models.SensorMeteoSME(**data.model_dump(), controller_id=controller_id, time=datetime.utcnow())
+    db_data = models.SensorMeteoSME(**data.model_dump(), controller_id=controller_id, time=datetime.now(timezone.utc))
     db.add(db_data)
     db.commit()
     db.refresh(db_data)

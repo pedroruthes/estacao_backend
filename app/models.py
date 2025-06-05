@@ -36,7 +36,7 @@ class SensorMeteoSME(Base):
     vel_wind = Column(Float, nullable=True)    
     pressure = Column(Integer, nullable=True) 
     rain_measure = Column(Float, nullable=True) 
-    time = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    time = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
 
     controller = relationship("Controller", back_populates="sensors_meteo_sme_data")
 
