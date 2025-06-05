@@ -8,10 +8,10 @@ from app.database import get_db
 
 router = APIRouter(prefix="/data", tags=["Dados de Sensores (SME)"])
 
+# Envia novos dados da estação
 @router.post("/", response_model=schemas.SensorMeteoSME)
 def receive_meteo_data(
     data: schemas.SensorMeteoSMECreate,
-    # A chave do controlador é enviada no cabeçalho "X-Controller-Key"
     x_controller_key: str = Header(..., description="Chave de Autenticação do Controlador"),
     db: Session = Depends(get_db)
 ):
@@ -23,6 +23,7 @@ def receive_meteo_data(
         )
     return crud.create_sensor_meteo_sme_data(db=db, data=data, controller_id=controller.id)
 
+# Retorna os dados armazenados de uma estação por ID (possui filtros)
 @router.get("/{controller_id}", response_model=List[schemas.SensorMeteoSME])
 def get_meteo_data_by_controller(
     controller_id: int,

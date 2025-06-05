@@ -4,6 +4,11 @@ from app import models, schemas
 import secrets # Para gerar tokens de API
 from datetime import datetime, timezone
 
+def update_model_from_schema(model, schema):
+    for field, value in schema.dict(exclude_unset=True).items():
+        setattr(model, field, value)
+    return model
+
 # Funções CRUD para Locations
 def get_location(db: Session, location_id: int):
     return db.query(models.Location).filter(models.Location.id == location_id).first()
@@ -17,6 +22,13 @@ def create_location(db: Session, location: schemas.LocationCreate):
     db.commit()
     db.refresh(db_location)
     return db_location
+
+def update_location(db: Session, db_location: models.Location, location_update: schemas.LocationUpdate):
+    updated_db_location = update_model_from_schema(db_location, location_update)
+    db.add(updated_db_location)
+    db.commit()
+    db.refresh(updated_db_location)
+    return updated_db_location
 
 # Funções CRUD para Controllers
 def get_controller(db: Session, controller_id: int):

@@ -16,6 +16,11 @@ class Location(LocationBase):
     class Config:
         from_attributes = True
 
+class LocationUpdate(BaseModel):
+    name: Optional[str] = None
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+
 class ControllerBase(BaseModel):
     location_id: int
     hw_desc: str
