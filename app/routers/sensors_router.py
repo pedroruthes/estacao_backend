@@ -6,9 +6,9 @@ from datetime import datetime
 from app import schemas, crud
 from app.database import get_db
 
-router = APIRouter(prefix="/sensors", tags=["Dados de Sensores (SME)"])
+router = APIRouter(prefix="/data", tags=["Dados de Sensores (SME)"])
 
-@router.post("/meteo", response_model=schemas.SensorMeteoSME)
+@router.post("/", response_model=schemas.SensorMeteoSME)
 def receive_meteo_data(
     data: schemas.SensorMeteoSMECreate,
     # A chave do controlador é enviada no cabeçalho "X-Controller-Key"
@@ -23,7 +23,7 @@ def receive_meteo_data(
         )
     return crud.create_sensor_meteo_sme_data(db=db, data=data, controller_id=controller.id)
 
-@router.get("/meteo/{controller_id}", response_model=List[schemas.SensorMeteoSME])
+@router.get("/{controller_id}", response_model=List[schemas.SensorMeteoSME])
 def get_meteo_data_by_controller(
     controller_id: int,
     start_time: Optional[datetime] = None,

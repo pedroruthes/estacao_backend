@@ -29,7 +29,6 @@ def get_controllers(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Controller).offset(skip).limit(limit).all()
 
 def create_controller(db: Session, controller: schemas.ControllerCreate):
-    # Gera uma chave de API para o controlador
     api_key = secrets.token_urlsafe(32)
     db_controller = models.Controller(**controller.model_dump(), key=api_key)
     db.add(db_controller)

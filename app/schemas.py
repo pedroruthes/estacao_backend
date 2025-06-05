@@ -19,8 +19,6 @@ class Location(LocationBase):
 class ControllerBase(BaseModel):
     location_id: int
     hw_desc: str
-    enabled: bool
-    version: float
 
 class ControllerCreate(ControllerBase):
     pass
@@ -28,6 +26,8 @@ class ControllerCreate(ControllerBase):
 class Controller(ControllerBase):
     id: int
     key: str
+    enabled: bool
+    version: Optional[float]
     class Config:
         from_attributes = True
 
