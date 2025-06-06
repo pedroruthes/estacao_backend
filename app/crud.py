@@ -61,6 +61,7 @@ def update_controller(db: Session, controller_id: int, controller_update: schema
         db.refresh(db_controller)
     return db_controller
 
+
 # Funções CRUD para Sensors
 def get_sensor(db: Session, sensor_id: int):
     return db.query(models.Sensor).filter(models.Sensor.id == sensor_id).first()
@@ -98,6 +99,7 @@ def delete_sensor(db: Session, sensor_id: int):
     
     return None
 
+
 # Funções CRUD para SensorMeteoSME
 def create_sensor_meteo_sme_data(db: Session, data: schemas.SensorMeteoSMECreate, controller_id: int):
     db_data = models.SensorMeteoSME(**data.model_dump(), controller_id=controller_id, time=datetime.now(timezone.utc))
@@ -126,3 +128,50 @@ def get_sensor_meteo_sme_data_by_controller_and_time_range(
         models.SensorMeteoSME.time >= start_time,
         models.SensorMeteoSME.time <= end_time
     ).order_by(models.SensorMeteoSME.time.desc()).offset(skip).limit(limit).all()
+
+
+# Função CRUD para SensorController
+def associate_sensor_with_controller(db: Session, sensor_id: int, controller_id: int):
+    # Verificar se a associação já existe
+    existing_association = db.query(models.SensorController).filter(
+        models.SensorController.sensor_id == sensor_id,
+        models.SensorController.controller_id == controller_id
+    ).first()
+    if existing_association:
+        return existing_association
+
+    db_sensor_controller = models.SensorController(
+        sensor_id=sensor_id,
+        controller_id=controller_id
+    )
+    db.add(db_sensor_controller)
+    db.commit()
+    db.refresh(db_sensor_controller)
+    return db_sensor_controller
+
+def get_sensor_controller_association(db: Session, sensor_id: int, controller_id: int):
+    return db.query(models.SensorController).filter(
+        models.SensorController.sensor_id == sensor_id,
+        models.SensorController.controller_id == controller_id
+    ).first()
+
+def get_controllers_for_sensor(db: Session, sensor_id: int, skip: int = 0, limit: int = 100):
+    return db.query(models.SensorController).filter(
+        models.SensorController.sensor_id == sensor_id
+    ).offset(skip).limit(limit).all()
+
+def get_sensors_for_controller(db: Session, controller_id: int, skip: int = 0, limit: int = 100):
+    return db.query(models.SensorController).filter(
+        models.SensorController.controller_id == controller_id
+    ).offset(skip).limit(limit).all()
+
+def dissociate_sensor_from_controller(db: Session, sensor_id: int, controller_id: int):
+    db_association = db.query(models.SensorController).filter(
+        models.SensorController.sensor_id == sensor_id,
+        models.SensorController.controller_id == controller_id
+    ).first()
+    if db_association:
+        db.delete(db_association)
+        db.commit()
+        return True
+    return False

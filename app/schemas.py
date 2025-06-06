@@ -64,6 +64,19 @@ class SensorUpdate(BaseModel):
     type: Optional[str] = None
 
 
+# Sensores - Controladores
+class SensorControllerBase(BaseModel):
+    sensor_id: int
+    controller_id: int
+
+class SensorControllerCreate(SensorControllerBase):
+    pass
+
+class SensorController(SensorControllerBase):
+    class Config:
+        from_attributes = True
+
+
 # Estação SME
 class SensorMeteoSMEBase(BaseModel):
     temperature: float
