@@ -13,7 +13,7 @@ Antes de iniciar, certifique-se de ter instalado:
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/pedroruthes/estacao_backend.git](https://github.com/pedroruthes/estacao_backend.git)
+    git clone https://github.com/pedroruthes/estacao_backend.git
     cd estacao_backend
     ```
 
