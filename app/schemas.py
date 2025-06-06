@@ -1,7 +1,7 @@
 # Define os modelos de dados para validação de entrada e serialização de saída
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 # Locais
 class LocationBase(BaseModel):
@@ -22,30 +22,6 @@ class LocationUpdate(BaseModel):
     lat: Optional[float] = None
     lng: Optional[float] = None
 
-
-# Controladores
-class ControllerBase(BaseModel):
-    location_id: int
-    hw_desc: str
-
-class ControllerCreate(ControllerBase):
-    pass
-
-class Controller(ControllerBase):
-    id: int
-    key: str
-    enabled: bool
-    version: Optional[float]
-    class Config:
-        from_attributes = True
-
-class ControllerUpdate(BaseModel):
-    hw_desc: Optional[str] = None
-    enabled: Optional[bool] = None
-    location_id: Optional[int] = None
-    version: Optional[float] = None
-
-
 # Sensores
 class SensorBase(BaseModel):
     name: str
@@ -62,6 +38,30 @@ class Sensor(SensorBase):
 class SensorUpdate(BaseModel):
     name: Optional[str] = None
     type: Optional[str] = None
+
+
+# Controladores
+class ControllerBase(BaseModel):
+    location_id: int
+    hw_desc: str
+
+class ControllerCreate(ControllerBase):
+    pass
+
+class Controller(ControllerBase):
+    id: int
+    key: str
+    enabled: bool
+    version: Optional[float]
+    sensors: List[Sensor] = []
+    class Config:
+        from_attributes = True
+
+class ControllerUpdate(BaseModel):
+    hw_desc: Optional[str] = None
+    enabled: Optional[bool] = None
+    location_id: Optional[int] = None
+    version: Optional[float] = None
 
 
 # Sensores - Controladores

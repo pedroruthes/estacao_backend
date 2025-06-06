@@ -1,5 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, DateTime, BigInteger, Text, Double
+# app/models.py
+from sqlalchemy import Column, Integer, Float, Boolean, ForeignKey, DateTime, Text, Double
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.hybrid import hybrid_property
 from app.database import Base
 from datetime import datetime, timedelta, timezone
 
@@ -24,7 +26,11 @@ class Controller(Base):
 
     location = relationship("Location", back_populates="controllers")
     sensors_meteo_sme_data = relationship("SensorMeteoSME", back_populates="controller")
-    sensors = relationship("SensorController", back_populates="controller")
+    sensor_associations = relationship("SensorController", back_populates="controller") 
+
+    @hybrid_property 
+    def sensors(self):
+        return [assoc.sensor for assoc in self.sensor_associations]
 
 class SensorMeteoSME(Base):
     __tablename__ = "sensors_meteo_sme"
@@ -105,12 +111,12 @@ class Sensor(Base):
     name = Column(Text, nullable=False)
     type = Column(Text, nullable=False)
 
-    controllers = relationship("SensorController", back_populates="sensor")
+    controller_associations = relationship("SensorController", back_populates="sensor")
 
 class SensorController(Base):
     __tablename__ = "sensors_controllers"
     sensor_id = Column(Integer, ForeignKey("sensors.id"), primary_key=True)
     controller_id = Column(Integer, ForeignKey("controllers.id"), primary_key=True)
 
-    sensor = relationship("Sensor", back_populates="controllers")
-    controller = relationship("Controller", back_populates="sensors")
+    sensor = relationship("Sensor", back_populates="controller_associations")
+    controller = relationship("Controller", back_populates="sensor_associations")

@@ -1,5 +1,5 @@
 # Contém as funções de interação com o banco de dados
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app import models, schemas
 import secrets # Para gerar tokens de API
 from datetime import datetime, timezone
@@ -33,13 +33,17 @@ def update_location(db: Session, db_location: models.Location, location_update: 
 
 # Funções CRUD para Controllers
 def get_controller(db: Session, controller_id: int):
-    return db.query(models.Controller).filter(models.Controller.id == controller_id).first()
+    return db.query(models.Controller).options(
+        joinedload(models.Controller.sensor_associations).joinedload(models.SensorController.sensor)
+    ).filter(models.Controller.id == controller_id).first()
 
 def get_controller_by_key(db: Session, key: str):
     return db.query(models.Controller).filter(models.Controller.key == key).first()
 
 def get_controllers(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Controller).offset(skip).limit(limit).all()
+    return db.query(models.Controller).options(
+        joinedload(models.Controller.sensor_associations).joinedload(models.SensorController.sensor)
+    ).offset(skip).limit(limit).all()
 
 def create_controller(db: Session, controller: schemas.ControllerCreate):
     api_key = secrets.token_urlsafe(32)
