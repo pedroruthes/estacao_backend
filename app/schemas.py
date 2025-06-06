@@ -1,7 +1,7 @@
 # Define os modelos de dados para validação de entrada e serialização de saída
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional
 
 class LocationBase(BaseModel):
     name: str
@@ -35,6 +35,12 @@ class Controller(ControllerBase):
     version: Optional[float]
     class Config:
         from_attributes = True
+
+class ControllerUpdate(BaseModel):
+    hw_desc: Optional[str] = None
+    enabled: Optional[bool] = None
+    location_id: Optional[int] = None
+    version: Optional[float] = None
 
 class SensorMeteoSMEBase(BaseModel):
     temperature: float

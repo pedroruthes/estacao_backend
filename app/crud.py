@@ -48,6 +48,18 @@ def create_controller(db: Session, controller: schemas.ControllerCreate):
     db.refresh(db_controller)
     return db_controller
 
+def update_controller(db: Session, controller_id: int, controller_update: schemas.ControllerUpdate):
+    db_controller = get_controller(db, controller_id)
+    if db_controller:
+        update_data = controller_update.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_controller, key, value)
+        
+        db.add(db_controller)
+        db.commit()
+        db.refresh(db_controller)
+    return db_controller
+
 # Funções CRUD para SensorMeteoSME
 def create_sensor_meteo_sme_data(db: Session, data: schemas.SensorMeteoSMECreate, controller_id: int):
     db_data = models.SensorMeteoSME(**data.model_dump(), controller_id=controller_id, time=datetime.now(timezone.utc))
