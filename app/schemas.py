@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 
+# Locais
 class LocationBase(BaseModel):
     name: str
     lat: float
@@ -21,6 +22,8 @@ class LocationUpdate(BaseModel):
     lat: Optional[float] = None
     lng: Optional[float] = None
 
+
+# Controladores
 class ControllerBase(BaseModel):
     location_id: int
     hw_desc: str
@@ -42,6 +45,26 @@ class ControllerUpdate(BaseModel):
     location_id: Optional[int] = None
     version: Optional[float] = None
 
+
+# Sensores
+class SensorBase(BaseModel):
+    name: str
+    type: str
+
+class SensorCreate(SensorBase):
+    pass
+
+class Sensor(SensorBase):
+    id: int
+    class Config:
+        from_attributes = True
+
+class SensorUpdate(BaseModel):
+    name: Optional[str] = None
+    type: Optional[str] = None
+
+
+# Estação SME
 class SensorMeteoSMEBase(BaseModel):
     temperature: float
     humidity: float

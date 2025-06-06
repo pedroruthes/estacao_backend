@@ -30,6 +30,7 @@ def update_location(db: Session, db_location: models.Location, location_update: 
     db.refresh(updated_db_location)
     return updated_db_location
 
+
 # Funções CRUD para Controllers
 def get_controller(db: Session, controller_id: int):
     return db.query(models.Controller).filter(models.Controller.id == controller_id).first()
@@ -59,6 +60,43 @@ def update_controller(db: Session, controller_id: int, controller_update: schema
         db.commit()
         db.refresh(db_controller)
     return db_controller
+
+# Funções CRUD para Sensors
+def get_sensor(db: Session, sensor_id: int):
+    return db.query(models.Sensor).filter(models.Sensor.id == sensor_id).first()
+
+def get_sensors(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Sensor).offset(skip).limit(limit).all()
+
+def create_sensor(db: Session, sensor: schemas.SensorCreate):
+    db_sensor = models.Sensor(**sensor.model_dump())
+    db.add(db_sensor)
+    db.commit()
+    db.refresh(db_sensor)
+    return db_sensor
+
+def update_sensor(db: Session, sensor_id: int, sensor_update: schemas.SensorUpdate):
+    db_sensor = get_sensor(db, sensor_id)
+    if db_sensor:
+        update_data = sensor_update.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_sensor, key, value)
+        
+        db.add(db_sensor)
+        db.commit()
+        db.refresh(db_sensor)
+    return db_sensor
+
+def delete_sensor(db: Session, sensor_id: int):
+    db_sensor = db.query(models.Sensor).filter(models.Sensor.id == sensor_id).first()
+
+    if db_sensor:
+        sensor_to_return = schemas.Sensor.model_validate(db_sensor)
+        db.delete(db_sensor)
+        db.commit()
+        return sensor_to_return
+    
+    return None
 
 # Funções CRUD para SensorMeteoSME
 def create_sensor_meteo_sme_data(db: Session, data: schemas.SensorMeteoSMECreate, controller_id: int):

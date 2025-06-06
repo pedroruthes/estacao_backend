@@ -1,4 +1,3 @@
-# Rota para receber os dados das estações meteorológicas, autenticada pela key do controlador
 from fastapi import APIRouter, Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
 from typing import List, Optional
